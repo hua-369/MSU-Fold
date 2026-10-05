@@ -1,6 +1,6 @@
 # 数据与权重不随仓库发布（见 README 的下载说明）
-datasets/
-pretrained/
+datasets
+pretrained
 outputs/
 data_generation/raw_data/
 data_generation/raw_data_mixed/
