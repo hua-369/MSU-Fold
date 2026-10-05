@@ -1,0 +1,8 @@
+---
+# 单臂（unimanual）时序数据集：single_data_sequential/All_<N>.pkl
+name: single_sequential
+n_samples: 1000
+dataset_path: ${dataset_root}/single_data_sequential/All_${.n_samples}.pkl
+depth_scale: 255
+image_size: 224
+max_context_length: 3

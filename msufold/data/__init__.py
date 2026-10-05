@@ -1,0 +1,117 @@
+import torch
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset as TorchDataset
+from torch.utils.data.distributed import DistributedSampler
+
+from .processor import Processor
+
+
+class BaseDataset(TorchDataset):
+    def __init__(self, cfg, processor_config, partition="train", *args, **kwargs):
+        super().__init__()
+
+        assert partition in ["train", "test"]
+        self.partition = partition
+
+        self.cfg = cfg
+        self.dataset_path = cfg.dataset_path
+        self.depth_scale = cfg.depth_scale
+
+        self.processor = Processor(
+            cfg=processor_config,
+            partition=partition,
+            *args,
+            **kwargs,
+        )
+
+
+class Datasets:
+    @staticmethod
+    def get_by_name(cfg, partition, *args, **kwargs) -> BaseDataset:
+        if cfg.get("loader") == "mixed_sequential":
+            # 显式声明的混合/双臂 loader（支持单臂 1 点、双臂 2 点的 collate）
+            from .mixed_dataset_sequential import MixedDatasetSequential as Dataset
+        elif cfg.name == "bimanual":
+            from .bimanual_dataset import BimanualDataset as Dataset
+        elif cfg.name == "bimanual_sequential":
+            from .bimanual_dataset_sequential import BimanualDatasetSequential as Dataset
+        elif cfg.name == "single":
+            from .single_dataset import SingleDataset as Dataset
+        elif cfg.name == "single_sequential":
+            from .single_dataset_sequential import SingleDatasetSequential as Dataset
+        elif cfg.name == "mixed_sequential":
+            # 单臂 + 双臂混合数据集（仅在 use_dual_data=true 时使用）
+            from .mixed_dataset_sequential import MixedDatasetSequential as Dataset
+        elif cfg.name == "real":
+            from .real_dataset import RealDataset as Dataset
+        else:
+            raise ValueError(f"Dataset {cfg.name} not recognized")
+        return Dataset(cfg, *args, **kwargs, partition=partition)
+
+    @staticmethod
+    def get_dataloaders(cfg, shuffle_test=False, *args, **kwargs):
+
+        if cfg.eval_only:
+            train_dataloader = None
+        else:
+            train_dataset = Datasets.get_by_name(
+                cfg.train_dataset,
+                *args,
+                **kwargs,
+                processor_config=cfg.processor,
+                partition="train",
+                autoprocessor_name=cfg["model"].get("automodel_name"),
+            )
+
+            if cfg.debug:
+                train_dataset[0]
+
+            distributed = torch.distributed.is_available() and torch.distributed.is_initialized()
+            if distributed:
+                # DDP：每个进程只吃 1/world_size 的数据，避免重复
+                train_sampler = DistributedSampler(train_dataset, shuffle=True)
+                train_dataloader = DataLoader(
+                    dataset=train_dataset,  # type: ignore
+                    batch_size=cfg.batch_size,
+                    shuffle=False,
+                    sampler=train_sampler,
+                    num_workers=cfg.num_workers,
+                    drop_last=True,
+                    collate_fn=getattr(train_dataset, "collate_fn", None),
+                )
+            else:
+                train_dataloader = DataLoader(
+                    dataset=train_dataset,  # type: ignore
+                    batch_size=cfg.batch_size,
+                    shuffle=True,
+                    num_workers=cfg.num_workers,
+                    collate_fn=getattr(train_dataset, "collate_fn", None),
+                )
+
+        if cfg.test_dataset.name is None:
+            cfg.test_dataset = cfg.train_dataset
+
+        test_dataset = Datasets.get_by_name(
+            cfg.test_dataset,
+            *args,
+            **kwargs,
+            processor_config=cfg.processor,
+            partition="test",
+            autoprocessor_name=cfg["model"].get("automodel_name"),
+        )
+
+        if cfg.debug:
+            test_dataset[0]
+
+        input_processor = test_dataset.processor
+
+        test_dataloader = DataLoader(
+            dataset=test_dataset,
+            batch_size=cfg.test_batch_size,
+            shuffle=shuffle_test,
+            num_workers=cfg.num_workers,
+            # 双臂数据集单臂 1 点 / 双臂 2 点，需要同样的 padding collate
+            collate_fn=getattr(test_dataset, "collate_fn", None),
+        )
+
+        return train_dataloader, test_dataloader, input_processor

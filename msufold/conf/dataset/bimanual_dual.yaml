@@ -1,0 +1,11 @@
+---
+# 双臂（单/双臂混合步）时序数据集：dual_data_sequential/All_<N>.pkl
+# loader 决定用 MixedDatasetSequential（同一 batch 内单臂 1 点、双臂 2 点的 collate）
+# 注意：这里 is_bimanual 恒为 false —— 单臂与双臂共用同一个 pick/place 热力图头
+name: bimanual_sequential
+loader: mixed_sequential
+n_samples: 1000
+dataset_path: ${dataset_root}/dual_data_sequential/All_${.n_samples}.pkl
+depth_scale: 255
+image_size: 224
+max_context_length: 3

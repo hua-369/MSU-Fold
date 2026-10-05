@@ -1,0 +1,26 @@
+---
+name: siglip_sequential
+image_size: ${train_dataset.image_size}
+patch_size: 16
+automodel_name: ${pretrained_root}/siglip-base-patch${model.patch_size}-${model.image_size}
+# 多尺度视觉聚合（MultiScaleVisualAdapter）：对冻结 SigLIP 各层 hidden states
+# 做逐 token 加权融合；num_scales=8 时采样 {h_emb,h1,h3,h4,h6,h8,h9,h11}
+multi_scale: true
+num_scales: 8
+dim: 768
+emb_dropout: 0.0
+lora: true
+r: 8
+lora_alpha: 32
+lora_dropout: 0.01
+target_modules: [q_proj, v_proj]
+text_encoder: null
+pick_place_model: pick_place_convdecoder
+fusion_model: concat_transformer
+depth: 8
+heads: 16
+mlp_ratio: 4
+dropout: 0.0
+context_length: ${train_dataset.max_context_length}
+use_pos_embed: false
+text_max_length: 64

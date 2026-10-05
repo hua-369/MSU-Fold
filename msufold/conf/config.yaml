@@ -1,0 +1,71 @@
+---
+defaults:
+  - _self_
+  - model: siglip_sequential
+  - dataset@train_dataset: single_sequential
+  - dataset@test_dataset: none
+  - processor: default
+  - loss: bce_gaussmap
+  - optim: adam
+  - scheduler: none
+  - override hydra/hydra_logging: disabled
+seed: 3407
+eval_only: false
+eval_epochs: 20
+save_epochs: null
+load_best: false
+use_wandb: false
+num_workers: 6
+batch_size: 4
+gradient_clip: null
+test_batch_size: 2
+epochs: 40
+debug: false
+num_evals: 50 # 闭环仿真评估时每个任务跑几个回合
+metrics:
+  computed_metrics: [kp_mse, ap_5, ap_10, ap_20, ap_50, iou, quantile_prob]
+  tracked_metric: kp_mse
+use_cpu: false
+# 训练用哪几张卡（DataParallel）。单卡填 [0]，CPU 训练时忽略；
+# 卡数不足时会自动裁剪，不会报错
+device_ids: [0, 1, 2, 3]
+simulator: softgym
+# 仓库根目录 = 启动 `python -m msufold` 时的当前目录
+root: ${hydra:runtime.cwd}
+dataset_root: ${root}/datasets
+# 预训练 SigLIP 权重本地目录（离线加载，见 README「预训练权重」）
+pretrained_root: ${root}/pretrained
+softgym_cache: ${dataset_root}/softgym_cache
+# 只评估指定任务（null = 全部）；如 eval_tasks='["MixedSquareCornerFold"]'
+eval_tasks: null
+visualize_model_inputs: false
+visualize_predictions: false
+hydra:
+  output_subdir:
+  run:
+    dir: ${root}/outputs/${train_dataset.name}/${hydra.job.override_dirname}
+  job:
+    chdir: true
+    config:
+      override_dirname:
+        exclude_keys:
+          - seed
+          - simulator
+          - use_wandb
+          - eval_only
+          - eval_epochs
+          - save_epochs
+          - dataset
+          - dataset_root
+          - root
+          - num_evals
+          - softgym_task
+          - softgym_cache
+          - visualize_attention
+          - visualize_actions
+          - num_workers
+          - load_best
+          - test_batch_size
+          - visualize_predictions
+          - use_cpu
+          - debug

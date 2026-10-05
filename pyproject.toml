@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "msu-fold"
+version = "1.0"
+description = "MSU-Fold: Unified Multi-Scale Heatmap Decoding and Language-Grounded Skill Decomposition for Multi-Step Robotic Cloth Folding"
+readme = "README.md"
+requires-python = ">=3.9.0"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python",
+]
+dependencies = [
+    "hydra-core",
+    "torch",
+    "torchvision",
+    "imageio",
+    "tqdm",
+    "matplotlib",
+    "seaborn",
+    "scikit-learn",
+    "plotly",
+    "scipy",
+    "ftfy",
+    "regex",
+    "peft",
+    "sentencepiece",
+    "einops",
+    "transformers",
+    "timm",
+    "opencv-python-headless",
+    "torchmetrics",
+    "pyyaml",
+    "omegaconf",
+    "numpy",
+    "pillow",
+]
+
+
+[project.optional-dependencies]
+dev = ["black >= 24.4.2", "isort >= 5.13.2", "flake8 >= 7.0", "Flake8-pyproject >= 1.2"]
+sim = ["gymnasium", "pybind11[global]"]
+
+
+[tool.black]
+line-length = 100
+preview = true
+enable-unstable-feature = ["hug_parens_with_braces_and_square_brackets"]
+
+
+[tool.flake8]
+max-line-length = 100
+extend-ignore = ["E203"]
+
+
+[tool.isort]
+profile = "black"
+line_length = 100
+known_first_party = ["msufold"]
+
+
+[tool.pyright]
+include = "msufold"
+exclude = [
+    "**/__pycache__",
+    "msufold/conf",
+]
+
+
+[tool.setuptools.packages.find]
+include = ["msufold*"]
+namespaces = true
