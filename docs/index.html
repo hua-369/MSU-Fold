@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MSU-Fold</title>
+<style>
+  :root { --bg:#0f1115; --card:#171a21; --fg:#e8eaed; --muted:#9aa0a6; --accent:#7aa2ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:1100px; margin:0 auto; padding:48px 24px 80px; }
+  h1 { font-size:34px; margin:0 0 8px; line-height:1.25; }
+  .authors { color:var(--muted); margin-bottom:20px; }
+  .badges a { display:inline-block; margin:0 8px 8px 0; padding:6px 14px; border-radius:20px;
+              background:var(--card); color:var(--fg); text-decoration:none; font-size:14px;
+              border:1px solid #2a2f3a; }
+  .badges a:hover { border-color:var(--accent); }
+  p.lead { font-size:17px; line-height:1.65; max-width:860px; }
+  h2 { font-size:22px; margin:44px 0 16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
+  .card { background:var(--card); border:1px solid #232833; border-radius:12px; overflow:hidden; }
+  .card video { width:100%; display:block; background:#000; }
+  .card .cap { padding:10px 14px; font-size:14px; color:var(--muted); }
+  .card .cap b { color:var(--fg); font-weight:600; }
+  .teaser { width:100%; border-radius:12px; border:1px solid #232833; }
+  footer { margin-top:56px; color:var(--muted); font-size:13px; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>MSU-Fold: Unified Multi-Scale Heatmap Decoding and Language-Grounded
+      Skill Decomposition for Multi-Step Robotic Cloth Folding</h1>
+  <div class="authors">Code · <a href="https://github.com/hua-369/MSU-Fold">github.com/hua-369/MSU-Fold</a></div>
+
+  <div class="badges">
+    <a href="https://github.com/hua-369/MSU-Fold">⭐ Code</a>
+    <a href="https://github.com/hua-369/MSU-Fold#quickstart">🚀 Getting started</a>
+  </div>
+
+  <p class="lead">
+    One natural-language instruction in, a folded garment out. A single shared
+    pick/place heatmap head serves both one-arm and two-arm steps, a multi-scale
+    adapter fuses hidden states of a frozen ViT, and a skill library decomposes the
+    instruction into executable folding steps that run closed-loop in simulation and
+    on a real dual-arm robot.
+  </p>
+
+  <h2>Teaser</h2>
+  <img class="teaser" src="assets/teaser.gif" alt="MSU-Fold teaser">
+
+  <h2>Simulation rollouts (unimanual)</h2>
+  <div class="grid">
+    <div class="card"><video src="assets/videos/simulation/unimanual-tshirt-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>unimanual-tshirt-fold</b> · 4 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/unimanual-trousers-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>unimanual-trousers-fold</b> · 3 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/unimanual-corner-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>unimanual-corner-fold</b> · 4 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/unimanual-triangle-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>unimanual-triangle-fold</b> · 2 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/unimanual-straight-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>unimanual-straight-fold</b> · 3 steps</div></div>
+  </div>
+
+  <h2>Simulation rollouts (bimanual)</h2>
+  <div class="grid">
+    <div class="card"><video src="assets/videos/simulation/bimanual-tshirt-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>bimanual-tshirt-fold</b> · 2 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/bimanual-trousers-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>bimanual-trousers-fold</b> · 2 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/bimanual-corner-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>bimanual-corner-fold</b> · 2 steps</div></div>
+    <div class="card"><video src="assets/videos/simulation/bimanual-half-fold.mp4" autoplay muted loop playsinline></video><div class="cap"><b>bimanual-half-fold</b> · 2 steps</div></div>
+  </div>
+
+  <h2>Real robot</h2>
+  <div class="grid">
+    <div class="card"><video src="assets/videos/real/single_arm_real.mp4" controls playsinline></video><div class="cap"><b>Single arm</b></div></div>
+    <div class="card"><video src="assets/videos/real/dual_arm_real.mp4" controls playsinline></video><div class="cap"><b>Dual arm</b></div></div>
+    <div class="card"><video src="assets/videos/real/single_and_dual_arm_real.mp4" controls playsinline></video><div class="cap"><b>Single + dual arm</b></div></div>
+  </div>
+
+  <footer>
+    Simulator: <a href="https://github.com/Xingyu-Lin/softgym">SoftGym</a> /
+    <a href="https://github.com/Barbany/bifold">BiFold</a> PyFlex ·
+    Unimanual demonstrators: <a href="https://github.com/dengyh16code/language_deformable">language_deformable</a> ·
+    License: MIT
+  </footer>
+
+</div>
+</body>
+</html>

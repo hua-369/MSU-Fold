@@ -1,12 +1,21 @@
 # MSU-Fold
 
-Language-guided multi-step cloth folding with a single shared pick/place heatmap head
-for one-arm and two-arm steps.
+**MSU-Fold: Unified Multi-Scale Heatmap Decoding and Language-Grounded Skill
+Decomposition for Multi-Step Robotic Cloth Folding**
+
+<div align="center">
+  <a href="https://hua-369.github.io/MSU-Fold/">
+    <img src="docs/assets/teaser.gif" width="70%">
+  </a>
+  <br>
+  <a href="https://hua-369.github.io/MSU-Fold/"><b>🌐 Project Page</b></a> —
+  all simulation and real-robot rollouts are hosted there
+</div>
 
 ## Installation
 
 ```bash
-git clone https://github.com/<YOUR_USER>/MSU-Fold.git
+git clone https://github.com/hua-369/MSU-Fold.git
 cd MSU-Fold
 
 conda env create -f environment.yml
@@ -114,38 +123,15 @@ python skill_inference_server.py --host 0.0.0.0 --port 8000 --device cuda:0 \
 | `GET /v1/sessions/{id}` | session progress |
 | `DELETE /v1/sessions/{id}` | release a session |
 
-## Rollouts
-
-### Simulation — unimanual
-
-<video src="assets/videos/simulation/unimanual-tshirt-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/unimanual-trousers-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/unimanual-corner-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/unimanual-triangle-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/unimanual-straight-fold.mp4" width="256" controls></video>
-
-### Simulation — bimanual
-
-<video src="assets/videos/simulation/bimanual-tshirt-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/bimanual-trousers-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/bimanual-corner-fold.mp4" width="256" controls></video>
-<video src="assets/videos/simulation/bimanual-half-fold.mp4" width="256" controls></video>
-
-### Real robot
-
-<video src="assets/videos/real/single_arm_real.mp4" width="320" controls></video>
-<video src="assets/videos/real/dual_arm_real.mp4" width="320" controls></video>
-<video src="assets/videos/real/single_and_dual_arm_real.mp4" width="320" controls></video>
-
 ## Repository layout
 
 ```
-msufold/           core library (conf / data / env / models / losses / metrics)
-skills/            9 folding skills + execution backends
-scripts/           train, evaluate, dataset packaging
-data_generation/   expert demo generation (SoftGym)
-deps/              PyFlex build instructions
-assets/videos/     rollout videos
+msufold/              core library (conf / data / env / models / losses / metrics)
+skills/               9 folding skills + execution backends
+scripts/              train, evaluate, dataset packaging
+data_generation/      expert demo generation (SoftGym)
+deps/                 PyFlex build instructions
+docs/                 project page (GitHub Pages) + rollout videos
 ```
 
 ## License
