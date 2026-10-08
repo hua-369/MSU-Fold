@@ -46,13 +46,22 @@ def _fix_runtime_env():
     os.environ[_ENV_READY] = "1"
 
     # 用相同的入口重启自身：LD_LIBRARY_PATH 只在进程启动时被动态链接器读取。
-    # `python -m msufold` 与直接运行脚本两种入口都要保持原样
+    # - 脚本方式（argv[0] 是文件路径）原样重启；
+    # - `python -m msufold` / torchrun 方式用 -m 重启；
+    # - 无法判断入口时给出提示并继续，绝不拼出错误的命令行。
     import __main__
 
-    if getattr(__main__, "__spec__", None) is not None:
-        argv = [sys.executable, "-m", "msufold"] + sys.argv[1:]
-    else:
+    spec = getattr(__main__, "__spec__", None)
+    if sys.argv and os.path.isfile(sys.argv[0]):
         argv = [sys.executable] + sys.argv
+    elif spec is not None and spec.name.endswith(".__main__"):
+        argv = [sys.executable, "-m", spec.name[: -len(".__main__")]] + sys.argv[1:]
+    else:
+        print(
+            "[msufold] 无法安全重启以补齐 LD_LIBRARY_PATH，请在 shell 中先执行："
+            "export LD_LIBRARY_PATH=$PYFLEXROOT/external/SDL2-2.0.4/lib/x64:$CUDART9_PATH:$LD_LIBRARY_PATH"
+        )
+        return
     os.execv(sys.executable, argv)
 
 
