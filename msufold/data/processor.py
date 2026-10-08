@@ -338,6 +338,10 @@ class Processor:
                 center_y = round(points[0, 1])
                 dist = (x - center_x) ** 2 + (y - center_y) ** 2
                 gauss_map = np.exp(-dist / (2 * self.cfg.sigma * self.cfg.sigma))
+            elif strategy == "mean":
+                center = points.mean(axis=0)
+                dist = (x - center[0]) ** 2 + (y - center[1]) ** 2
+                gauss_map = np.exp(-dist / (2 * self.cfg.sigma**2))
             elif strategy == "gmm":
                 gauss_map = np.zeros_like(x, dtype=np.float64)
                 for center_x, center_y in np.round(points):
