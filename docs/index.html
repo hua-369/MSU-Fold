@@ -142,8 +142,7 @@
     grounding. A shared pick-and-place heatmap head, supervised with bimodal mixture targets, serves
     both execution forms: the number of extracted peaks is dictated by each step, removing
     arm-specific heads and annotations. A skill library decomposes one natural-language instruction
-    into ordered atomic steps, which are executed in a closed loop through an asynchronous inference
-    service. On the single-arm SoftGym benchmark, MSU-Fold surpasses the strongest baseline by
+    into ordered atomic steps, which are executed in a closed loop through an offboard inference service. On the single-arm SoftGym benchmark, MSU-Fold surpasses the strongest baseline by
     <b>12.8</b> and <b>17.2</b> average success points on unseen tasks with 100 and 1000
     demonstrations per task. On a dual-arm benchmark with 150 demonstrations per task, it achieves
     <b>81.8%</b> and <b>79.8%</b> average success under seen and unseen instructions while executing
